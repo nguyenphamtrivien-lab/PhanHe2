@@ -1,0 +1,14 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <RootNamespace>QLBV.DAL</RootNamespace>
+    <AssemblyName>QLBV.DAL</AssemblyName>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Oracle.ManagedDataAccess.Core" Version="23.4.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\QLBV.DTO\QLBV.DTO.csproj" />
+  </ItemGroup>
+</Project>
