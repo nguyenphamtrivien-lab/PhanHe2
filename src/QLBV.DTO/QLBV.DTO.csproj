@@ -1,8 +1,0 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <TargetFramework>net8.0-windows</TargetFramework>
-    <RootNamespace>QLBV.DTO</RootNamespace>
-    <AssemblyName>QLBV.DTO</AssemblyName>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
-</Project>
