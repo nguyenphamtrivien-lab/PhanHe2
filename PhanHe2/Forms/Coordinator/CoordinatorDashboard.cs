@@ -163,7 +163,7 @@ public partial class CoordinatorDashboard : UserControl
             return;
         }
         var dv = (HsbaDv)dgvHsbaDv.SelectedRows[0].DataBoundItem;
-        using var dlg = new AssignTechnicianDialog(dv);
+        using var dlg = new AssignTechnicianDialog(dv.MaHSBA);
         if (dlg.ShowDialog() == DialogResult.OK)
             LoadHsbaDv();
     }
