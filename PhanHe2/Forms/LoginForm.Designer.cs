@@ -14,12 +14,6 @@ partial class LoginForm
     private TextBox txtUsername;
     private Label lblPassword;
     private TextBox txtPassword;
-    private Label lblServerLabel;
-    private ComboBox cmbServer;
-    private Label lblPort;
-    private TextBox txtPort;
-    private Label lblService;
-    private TextBox txtService;
     private Button btnLogin;
     private Label lblStatus;
     private Panel pnlSeparator;
@@ -38,7 +32,7 @@ partial class LoginForm
 
         // === Form chính ===
         this.Text = "Đăng nhập - Hệ thống Quản lý Y tế Bệnh viện";
-        this.Size = new Size(520, 680);
+        this.Size = new Size(600, 750); // Mở rộng form
         this.StartPosition = FormStartPosition.CenterScreen;
         this.FormBorderStyle = FormBorderStyle.FixedSingle;
         this.MaximizeBox = false;
@@ -58,23 +52,23 @@ partial class LoginForm
         {
             BackColor = Color.FromArgb(30, 30, 58),
             Padding = new Padding(40),
-            Width = 420,
-            Height = 580,
-            Left = 10,
-            Top = 30
+            Width = 500, // Mở rộng panel
+            Height = 600,
+            Left = 40,
+            Top = 35
         };
 
         // === Icon bệnh viện ===
         lblIcon = new Label
         {
             Text = "🏥",
-            Font = new Font("Segoe UI", 32f),
+            Font = new Font("Segoe UI", 40f), // To hơn
             ForeColor = Color.FromArgb(100, 181, 246),
             AutoSize = false,
-            Width = 340,
-            Height = 50,
+            Width = 420,
+            Height = 65,
             Left = 40,
-            Top = 30,
+            Top = 40,
             TextAlign = ContentAlignment.MiddleCenter
         };
 
@@ -82,13 +76,13 @@ partial class LoginForm
         lblTitle = new Label
         {
             Text = "QUẢN LÝ Y TẾ",
-            Font = new Font("Segoe UI", 20f, FontStyle.Bold),
+            Font = new Font("Segoe UI", 24f, FontStyle.Bold), // To hơn
             ForeColor = Color.FromArgb(100, 181, 246),
             AutoSize = false,
-            Width = 340,
-            Height = 40,
+            Width = 420,
+            Height = 50,
             Left = 40,
-            Top = 85,
+            Top = 110,
             TextAlign = ContentAlignment.MiddleCenter
         };
 
@@ -96,13 +90,13 @@ partial class LoginForm
         lblSubTitle = new Label
         {
             Text = "Hệ thống quản lý dữ liệu bệnh viện",
-            Font = new Font("Segoe UI", 10f),
+            Font = new Font("Segoe UI", 11f),
             ForeColor = Color.FromArgb(150, 150, 180),
             AutoSize = false,
-            Width = 340,
+            Width = 420,
             Height = 25,
             Left = 40,
-            Top = 128,
+            Top = 160,
             TextAlign = ContentAlignment.MiddleCenter
         };
 
@@ -110,37 +104,37 @@ partial class LoginForm
         pnlSeparator = new Panel
         {
             BackColor = Color.FromArgb(60, 60, 100),
-            Width = 300,
+            Width = 360,
             Height = 1,
-            Left = 60,
-            Top = 163
+            Left = 70,
+            Top = 200
         };
 
         // === Label Username ===
         lblUsername = new Label
         {
             Text = "TÊN ĐĂNG NHẬP",
-            Font = new Font("Segoe UI", 8f, FontStyle.Bold),
+            Font = new Font("Segoe UI", 9f, FontStyle.Bold),
             ForeColor = Color.FromArgb(120, 180, 250),
             AutoSize = false,
-            Width = 340,
+            Width = 420,
             Height = 20,
             Left = 40,
-            Top = 180
+            Top = 230
         };
 
         // === TextBox Username ===
         txtUsername = new TextBox
         {
-            Width = 340,
-            Height = 38,
+            Width = 420,
+            Height = 45, // To hơn
             Left = 40,
-            Top = 202,
+            Top = 255,
             BackColor = Color.FromArgb(40, 40, 70),
             ForeColor = Color.White,
             BorderStyle = BorderStyle.FixedSingle,
-            Font = new Font("Segoe UI", 11f),
-            Padding = new Padding(5)
+            Font = new Font("Segoe UI", 13f),
+            Padding = new Padding(8)
         };
         txtUsername.KeyDown += new KeyEventHandler(txtUsername_KeyDown);
 
@@ -148,127 +142,43 @@ partial class LoginForm
         lblPassword = new Label
         {
             Text = "MẬT KHẨU",
-            Font = new Font("Segoe UI", 8f, FontStyle.Bold),
+            Font = new Font("Segoe UI", 9f, FontStyle.Bold),
             ForeColor = Color.FromArgb(120, 180, 250),
             AutoSize = false,
-            Width = 340,
+            Width = 420,
             Height = 20,
             Left = 40,
-            Top = 255
+            Top = 320
         };
 
         // === TextBox Password ===
         txtPassword = new TextBox
         {
-            Width = 340,
-            Height = 38,
+            Width = 420,
+            Height = 45,
             Left = 40,
-            Top = 277,
+            Top = 345,
             BackColor = Color.FromArgb(40, 40, 70),
             ForeColor = Color.White,
             BorderStyle = BorderStyle.FixedSingle,
-            Font = new Font("Segoe UI", 11f),
-            PasswordChar = '●'
+            Font = new Font("Segoe UI", 13f),
+            PasswordChar = '●',
+            Padding = new Padding(8)
         };
         txtPassword.KeyDown += new KeyEventHandler(txtPassword_KeyDown);
-
-        // === Label Server ===
-        lblServerLabel = new Label
-        {
-            Text = "MÁY CHỦ",
-            Font = new Font("Segoe UI", 8f, FontStyle.Bold),
-            ForeColor = Color.FromArgb(120, 180, 250),
-            AutoSize = false,
-            Width = 160,
-            Height = 20,
-            Left = 40,
-            Top = 330
-        };
-
-        // === ComboBox Server ===
-        cmbServer = new ComboBox
-        {
-            Width = 160,
-            Height = 32,
-            Left = 40,
-            Top = 352,
-            BackColor = Color.FromArgb(40, 40, 70),
-            ForeColor = Color.White,
-            FlatStyle = FlatStyle.Flat,
-            Font = new Font("Segoe UI", 10f),
-            DropDownStyle = ComboBoxStyle.DropDown
-        };
-        cmbServer.Items.AddRange(new[] { "localhost", "127.0.0.1" });
-        cmbServer.Text = "localhost";
-
-        // === Label Port ===
-        lblPort = new Label
-        {
-            Text = "CỔNG",
-            Font = new Font("Segoe UI", 8f, FontStyle.Bold),
-            ForeColor = Color.FromArgb(120, 180, 250),
-            AutoSize = false,
-            Width = 80,
-            Height = 20,
-            Left = 215,
-            Top = 330
-        };
-
-        // === TextBox Port ===
-        txtPort = new TextBox
-        {
-            Width = 80,
-            Height = 32,
-            Left = 215,
-            Top = 352,
-            BackColor = Color.FromArgb(40, 40, 70),
-            ForeColor = Color.White,
-            BorderStyle = BorderStyle.FixedSingle,
-            Font = new Font("Segoe UI", 10f),
-            Text = "1521",
-            TextAlign = HorizontalAlignment.Center
-        };
-
-        // === Label Service ===
-        lblService = new Label
-        {
-            Text = "SERVICE",
-            Font = new Font("Segoe UI", 8f, FontStyle.Bold),
-            ForeColor = Color.FromArgb(120, 180, 250),
-            AutoSize = false,
-            Width = 80,
-            Height = 20,
-            Left = 308,
-            Top = 330
-        };
-
-        // === TextBox Service ===
-        txtService = new TextBox
-        {
-            Width = 72,
-            Height = 32,
-            Left = 308,
-            Top = 352,
-            BackColor = Color.FromArgb(40, 40, 70),
-            ForeColor = Color.White,
-            BorderStyle = BorderStyle.FixedSingle,
-            Font = new Font("Segoe UI", 10f),
-            Text = "XE",
-            TextAlign = HorizontalAlignment.Center
-        };
 
         // === Button Đăng nhập ===
         btnLogin = new Button
         {
             Text = "ĐĂNG NHẬP",
-            Width = 340,
-            Height = 45,
+            Width = 420,
+            Height = 55, // Nút to hơn
             Left = 40,
-            Top = 410,
+            Top = 430,
             BackColor = Color.FromArgb(21, 101, 192),
             ForeColor = Color.White,
             FlatStyle = FlatStyle.Flat,
-            Font = new Font("Segoe UI", 11f, FontStyle.Bold),
+            Font = new Font("Segoe UI", 13f, FontStyle.Bold),
             Cursor = Cursors.Hand
         };
         btnLogin.FlatAppearance.BorderSize = 0;
@@ -278,13 +188,13 @@ partial class LoginForm
         lblStatus = new Label
         {
             Text = "",
-            Font = new Font("Segoe UI", 9f),
+            Font = new Font("Segoe UI", 10f),
             ForeColor = Color.FromArgb(239, 83, 80),
             AutoSize = false,
-            Width = 340,
+            Width = 420,
             Height = 40,
             Left = 40,
-            Top = 465,
+            Top = 495,
             TextAlign = ContentAlignment.MiddleCenter
         };
 
@@ -292,13 +202,13 @@ partial class LoginForm
         lblVersion = new Label
         {
             Text = "PhanHe2 v1.0 | Oracle 21c XE | .NET 8",
-            Font = new Font("Segoe UI", 8f),
+            Font = new Font("Segoe UI", 9f),
             ForeColor = Color.FromArgb(80, 80, 110),
             AutoSize = false,
-            Width = 340,
+            Width = 420,
             Height = 20,
             Left = 40,
-            Top = 510,
+            Top = 550,
             TextAlign = ContentAlignment.MiddleCenter
         };
 
@@ -308,9 +218,6 @@ partial class LoginForm
             lblIcon, lblTitle, lblSubTitle, pnlSeparator,
             lblUsername, txtUsername,
             lblPassword, txtPassword,
-            lblServerLabel, cmbServer,
-            lblPort, txtPort,
-            lblService, txtService,
             btnLogin, lblStatus, lblVersion
         });
 

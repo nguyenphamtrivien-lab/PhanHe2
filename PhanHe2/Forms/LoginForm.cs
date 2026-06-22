@@ -42,9 +42,9 @@ public partial class LoginForm : Form
         {
             string username = txtUsername.Text.Trim();
             string password = txtPassword.Text;
-            string host = cmbServer.Text.Trim();
-            string portText = txtPort.Text.Trim();
-            string service = txtService.Text.Trim();
+            string host = "localhost";
+            int port = 1521;
+            string service = "XE";
 
             // Kiểm tra dữ liệu nhập
             if (string.IsNullOrEmpty(username))
@@ -55,11 +55,6 @@ public partial class LoginForm : Form
             if (string.IsNullOrEmpty(password))
             {
                 ShowError("Vui lòng nhập mật khẩu.");
-                return;
-            }
-            if (!int.TryParse(portText, out int port) || port <= 0 || port > 65535)
-            {
-                ShowError("Cổng kết nối không hợp lệ (1-65535).");
                 return;
             }
 
