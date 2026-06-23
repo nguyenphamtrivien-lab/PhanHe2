@@ -27,12 +27,15 @@ public class UserSession
     public string DisplayName { get; set; } = "";
     /// <summary>Vai trò trong hệ thống</summary>
     public UserRole Role { get; set; }
-    /// <summary>Username Oracle</summary>
+    /// <summary>Username Oracle (uppercase)</summary>
     public string OraUser { get; set; } = "";
 }
 
 /// <summary>
-/// Dịch vụ xác thực và phân quyền
+/// Dịch vụ xác thực và phân quyền.
+/// Toàn bộ xác thực dựa trên cơ chế Oracle Database:
+/// - Kết nối Oracle = xác thực tài khoản (không cần bảng user riêng)
+/// - SYS_CONTEXT('USERENV','SESSION_USER') = xác định danh tính người dùng
 /// </summary>
 public static class AuthService
 {
@@ -42,6 +45,7 @@ public static class AuthService
     /// <summary>
     /// Sau khi đăng nhập Oracle thành công, xác định vai trò người dùng.
     /// Truy vấn bảng NHÂNVIÊN trước, nếu không có thì thử bảng BỆNHNHÂN.
+    /// Dùng quoted identifiers vì tên cột tiếng Việt.
     /// </summary>
     /// <returns>UserSession hoặc null nếu không tìm thấy trong CSDL</returns>
     public static UserSession? GetCurrentUser()
@@ -50,21 +54,21 @@ public static class AuthService
         {
             var conn = OracleHelper.GetConnection();
 
-            // Bước 1: Tìm trong bảng NHÂNVIÊN
+            // Bước 1: Tìm trong bảng NHÂNVIÊN (dùng quoted identifiers)
             using (var cmd = new OracleCommand(
-                "SELECT VAITRÒ, MÃNV, HỌTÊN FROM NHÂNVIÊN " +
-                "WHERE ORAUSER = SYS_CONTEXT('USERENV','SESSION_USER')", conn))
+                "SELECT \"VAITRÒ\", \"MÃNV\", \"HỌTÊN\" FROM \"NHÂNVIÊN\" " +
+                "WHERE \"ORAUSER\" = SYS_CONTEXT('USERENV','SESSION_USER')", conn))
             {
                 using var reader = cmd.ExecuteReader();
                 if (reader.Read())
                 {
-                    var vaiTro = reader["VAITRÒ"].ToString() ?? "";
+                    var vaiTro = reader["VAITRÒ"]?.ToString() ?? "";
                     var session = new UserSession
                     {
-                        UserId = reader["MÃNV"].ToString() ?? "",
-                        DisplayName = reader["HỌTÊN"].ToString() ?? "",
-                        OraUser = OracleHelper.CurrentUser ?? "",
-                        Role = ParseNhanVienRole(vaiTro)
+                        UserId      = reader["MÃNV"]?.ToString() ?? "",
+                        DisplayName = reader["HỌTÊN"]?.ToString() ?? "",
+                        OraUser     = OracleHelper.CurrentUser ?? "",
+                        Role        = ParseNhanVienRole(vaiTro)
                     };
                     CurrentSession = session;
                     return session;
@@ -73,41 +77,40 @@ public static class AuthService
 
             // Bước 2: Không có trong NHÂNVIÊN → thử bảng BỆNHNHÂN
             using (var cmd2 = new OracleCommand(
-                "SELECT MÃBN, TÊNBN FROM BỆNHNHÂN " +
-                "WHERE ORAUSER = SYS_CONTEXT('USERENV','SESSION_USER')", conn))
+                "SELECT \"MÃBN\", \"TÊNBN\" FROM \"BỆNHNHÂN\" " +
+                "WHERE \"ORAUSER\" = SYS_CONTEXT('USERENV','SESSION_USER')", conn))
             {
                 using var reader2 = cmd2.ExecuteReader();
                 if (reader2.Read())
                 {
                     var session = new UserSession
                     {
-                        UserId = reader2["MÃBN"].ToString() ?? "",
-                        DisplayName = reader2["TÊNBN"].ToString() ?? "",
-                        OraUser = OracleHelper.CurrentUser ?? "",
-                        Role = UserRole.BenhNhan
+                        UserId      = reader2["MÃBN"]?.ToString() ?? "",
+                        DisplayName = reader2["TÊNBN"]?.ToString() ?? "",
+                        OraUser     = OracleHelper.CurrentUser ?? "",
+                        Role        = UserRole.BenhNhan
                     };
                     CurrentSession = session;
                     return session;
                 }
             }
 
-            // Bước 3: Có thể là DBA (không có trong bảng nghiệp vụ)
-            if (OracleHelper.CurrentUser?.ToUpper() == "SYS" ||
-                OracleHelper.CurrentUser?.ToUpper() == "SYSTEM" ||
-                OracleHelper.CurrentUser?.StartsWith("DBA") == true)
+            // Bước 3: Có thể là DBA (SYS/SYSTEM - không có trong bảng nghiệp vụ)
+            var currentUser = OracleHelper.CurrentUser?.ToUpper() ?? "";
+            if (currentUser == "SYS" || currentUser == "SYSTEM")
             {
                 var dbaSession = new UserSession
                 {
-                    UserId = OracleHelper.CurrentUser ?? "DBA",
-                    DisplayName = "Quản trị hệ thống",
-                    OraUser = OracleHelper.CurrentUser ?? "",
-                    Role = UserRole.DBA
+                    UserId      = currentUser,
+                    DisplayName = "Quản trị hệ thống (DBA)",
+                    OraUser     = currentUser,
+                    Role        = UserRole.DBA
                 };
                 CurrentSession = dbaSession;
                 return dbaSession;
             }
 
-            // Không tìm thấy vai trò
+            // Không tìm thấy vai trò nào
             CurrentSession = null;
             return null;
         }
@@ -118,20 +121,29 @@ public static class AuthService
         }
     }
 
-    /// <summary>Chuyển đổi chuỗi VaiTrò sang enum UserRole</summary>
+    /// <summary>
+    /// Chuyển đổi chuỗi VaiTrò từ CSDL sang enum UserRole.
+    /// So sánh không phân biệt hoa thường với các giá trị có dấu tiếng Việt.
+    /// </summary>
     private static UserRole ParseNhanVienRole(string vaiTro)
     {
-        return vaiTro.ToUpper() switch
-        {
-            "CÔ VIÊN ĐIỀU PHỐI" or "COVIENDIEUPHOI" or "ĐIỀU PHỐI" => UserRole.CoVienDieuPhoi,
-            "BÁC SĨ" or "BACSI" or "BS" => UserRole.BacSi,
-            "KỸ THUẬT VIÊN" or "KYTHUATVIEN" or "KTV" => UserRole.KyThuatVien,
-            "DBA" or "ADMIN" => UserRole.DBA,
-            _ => UserRole.BacSi // Mặc định
-        };
+        // So sánh trực tiếp (không dùng ToUpper vì tiếng Việt có thể bị mất dấu)
+        if (string.IsNullOrEmpty(vaiTro)) return UserRole.BacSi;
+
+        if (vaiTro.Contains("Điều phối", StringComparison.OrdinalIgnoreCase))
+            return UserRole.CoVienDieuPhoi;
+
+        if (vaiTro.Contains("Bác sĩ", StringComparison.OrdinalIgnoreCase) ||
+            vaiTro.Contains("Y sĩ", StringComparison.OrdinalIgnoreCase))
+            return UserRole.BacSi;
+
+        if (vaiTro.Contains("Kỹ thuật", StringComparison.OrdinalIgnoreCase))
+            return UserRole.KyThuatVien;
+
+        return UserRole.BacSi; // Mặc định an toàn
     }
 
-    /// <summary>Xóa phiên đăng nhập hiện tại</summary>
+    /// <summary>Xóa phiên đăng nhập hiện tại và ngắt kết nối Oracle</summary>
     public static void Logout()
     {
         CurrentSession = null;

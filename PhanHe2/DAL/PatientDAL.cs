@@ -8,8 +8,11 @@ namespace PhanHe2.DAL;
 /// </summary>
 public static class PatientDAL
 {
+    private const string TABLE = "\"BỆNHNHÂN\"";
+
     /// <summary>
-    /// Lấy toàn bộ danh sách bệnh nhân (dành cho Điều phối viên)
+    /// Lấy toàn bộ danh sách bệnh nhân (dành cho Điều phối viên).
+    /// VPD Oracle tự lọc nếu user không phải DPV.
     /// </summary>
     public static List<BenhNhan> GetAllPatients()
     {
@@ -18,9 +21,9 @@ public static class PatientDAL
         {
             var conn = OracleHelper.GetConnection();
             using var cmd = new OracleCommand(
-                "SELECT MÃBN, TÊNBN, PHÁI, NGÀYSINH, CCCD, SỐNHÀ, TÊNĐƯỜNG, " +
-                "QUẬNHUYỆN, TỈNHTP, TIỀNSỬBỆNH, TIỀNSỬBỆNHGĐ, DỊỨNGTHUỐC, ORAUSER " +
-                "FROM BỆNHNHÂN ORDER BY MÃBN", conn);
+                $"SELECT \"MÃBN\", \"TÊNBN\", \"PHÁI\", \"NGÀYSINH\", \"CCCD\", \"SỐNHÀ\", \"TÊNĐƯỜNG\", " +
+                $"\"QUẬNHUYỆN\", \"TỈNHTP\", \"TIỀNSỬBỆNH\", \"TIỀNSỬBỆNHGĐ\", \"DỊỨNGTHUỐC\", \"ORAUSER\" " +
+                $"FROM {TABLE} ORDER BY \"MÃBN\"", conn);
             using var reader = cmd.ExecuteReader();
             while (reader.Read())
                 list.Add(MapReader(reader));
@@ -40,9 +43,9 @@ public static class PatientDAL
         {
             var conn = OracleHelper.GetConnection();
             using var cmd = new OracleCommand(
-                "SELECT MÃBN, TÊNBN, PHÁI, NGÀYSINH, CCCD, SỐNHÀ, TÊNĐƯỜNG, " +
-                "QUẬNHUYỆN, TỈNHTP, TIỀNSỬBỆNH, TIỀNSỬBỆNHGĐ, DỊỨNGTHUỐC, ORAUSER " +
-                "FROM BỆNHNHÂN WHERE MÃBN = :maBN", conn);
+                $"SELECT \"MÃBN\", \"TÊNBN\", \"PHÁI\", \"NGÀYSINH\", \"CCCD\", \"SỐNHÀ\", \"TÊNĐƯỜNG\", " +
+                $"\"QUẬNHUYỆN\", \"TỈNHTP\", \"TIỀNSỬBỆNH\", \"TIỀNSỬBỆNHGĐ\", \"DỊỨNGTHUỐC\", \"ORAUSER\" " +
+                $"FROM {TABLE} WHERE \"MÃBN\" = :maBN", conn);
             cmd.Parameters.Add(new OracleParameter("maBN", maBN));
             using var reader = cmd.ExecuteReader();
             if (reader.Read()) return MapReader(reader);
@@ -55,16 +58,16 @@ public static class PatientDAL
         return null;
     }
 
-    /// <summary>Bệnh nhân xem thông tin của chính mình (dùng SESSION_USER)</summary>
+    /// <summary>Bệnh nhân xem thông tin của chính mình (dùng SESSION_USER, bảo mật ở tầng Oracle)</summary>
     public static BenhNhan? GetMyInfo()
     {
         try
         {
             var conn = OracleHelper.GetConnection();
             using var cmd = new OracleCommand(
-                "SELECT MÃBN, TÊNBN, PHÁI, NGÀYSINH, CCCD, SỐNHÀ, TÊNĐƯỜNG, " +
-                "QUẬNHUYỆN, TỈNHTP, TIỀNSỬBỆNH, TIỀNSỬBỆNHGĐ, DỊỨNGTHUỐC, ORAUSER " +
-                "FROM BỆNHNHÂN WHERE ORAUSER = SYS_CONTEXT('USERENV','SESSION_USER')", conn);
+                $"SELECT \"MÃBN\", \"TÊNBN\", \"PHÁI\", \"NGÀYSINH\", \"CCCD\", \"SỐNHÀ\", \"TÊNĐƯỜNG\", " +
+                $"\"QUẬNHUYỆN\", \"TỈNHTP\", \"TIỀNSỬBỆNH\", \"TIỀNSỬBỆNHGĐ\", \"DỊỨNGTHUỐC\", \"ORAUSER\" " +
+                $"FROM {TABLE} WHERE \"ORAUSER\" = SYS_CONTEXT('USERENV','SESSION_USER')", conn);
             using var reader = cmd.ExecuteReader();
             if (reader.Read()) return MapReader(reader);
         }
@@ -83,8 +86,8 @@ public static class PatientDAL
         {
             var conn = OracleHelper.GetConnection();
             using var cmd = new OracleCommand(
-                "INSERT INTO BỆNHNHÂN (MÃBN, TÊNBN, PHÁI, NGÀYSINH, CCCD, SỐNHÀ, TÊNĐƯỜNG, " +
-                "QUẬNHUYỆN, TỈNHTP, TIỀNSỬBỆNH, TIỀNSỬBỆNHGĐ, DỊỨNGTHUỐC, ORAUSER) " +
+                $"INSERT INTO {TABLE} (\"MÃBN\", \"TÊNBN\", \"PHÁI\", \"NGÀYSINH\", \"CCCD\", \"SỐNHÀ\", \"TÊNĐƯỜNG\", " +
+                "\"QUẬNHUYỆN\", \"TỈNHTP\", \"TIỀNSỬBỆNH\", \"TIỀNSỬBỆNHGĐ\", \"DỊỨNGTHUỐC\", \"ORAUSER\") " +
                 "VALUES (:maBN, :tenBN, :phai, :ngaySinh, :cccd, :soNha, :tenDuong, " +
                 ":quanHuyen, :tinhTP, :tienSuBenh, :tienSuBenhGD, :diUngThuoc, :oraUser)", conn);
             AddParams(cmd, bn);
@@ -105,21 +108,21 @@ public static class PatientDAL
         {
             var conn = OracleHelper.GetConnection();
             using var cmd = new OracleCommand(
-                "UPDATE BỆNHNHÂN SET TÊNBN=:tenBN, PHÁI=:phai, NGÀYSINH=:ngaySinh, " +
-                "CCCD=:cccd, SỐNHÀ=:soNha, TÊNĐƯỜNG=:tenDuong, QUẬNHUYỆN=:quanHuyen, " +
-                "TỈNHTP=:tinhTP, TIỀNSỬBỆNH=:tienSuBenh, TIỀNSỬBỆNHGĐ=:tienSuBenhGD, " +
-                "DỊỨNGTHUỐC=:diUngThuoc WHERE MÃBN=:maBN", conn);
+                $"UPDATE {TABLE} SET \"TÊNBN\"=:tenBN, \"PHÁI\"=:phai, \"NGÀYSINH\"=:ngaySinh, " +
+                "\"CCCD\"=:cccd, \"SỐNHÀ\"=:soNha, \"TÊNĐƯỜNG\"=:tenDuong, \"QUẬNHUYỆN\"=:quanHuyen, " +
+                "\"TỈNHTP\"=:tinhTP, \"TIỀNSỬBỆNH\"=:tienSuBenh, \"TIỀNSỬBỆNHGĐ\"=:tienSuBenhGD, " +
+                "\"DỊỨNGTHUỐC\"=:diUngThuoc WHERE \"MÃBN\"=:maBN", conn);
             cmd.Parameters.Add(new OracleParameter("tenBN", bn.TenBN));
-            cmd.Parameters.Add(new OracleParameter("phai", bn.Phai));
+            cmd.Parameters.Add(new OracleParameter("phai", (object?)bn.Phai ?? DBNull.Value));
             cmd.Parameters.Add(new OracleParameter("ngaySinh", (object?)bn.NgaySinh ?? DBNull.Value));
-            cmd.Parameters.Add(new OracleParameter("cccd", bn.CCCD));
-            cmd.Parameters.Add(new OracleParameter("soNha", bn.SoNha));
-            cmd.Parameters.Add(new OracleParameter("tenDuong", bn.TenDuong));
-            cmd.Parameters.Add(new OracleParameter("quanHuyen", bn.QuanHuyen));
-            cmd.Parameters.Add(new OracleParameter("tinhTP", bn.TinhTP));
-            cmd.Parameters.Add(new OracleParameter("tienSuBenh", bn.TienSuBenh));
-            cmd.Parameters.Add(new OracleParameter("tienSuBenhGD", bn.TienSuBenhGD));
-            cmd.Parameters.Add(new OracleParameter("diUngThuoc", bn.DiUngThuoc));
+            cmd.Parameters.Add(new OracleParameter("cccd", (object?)bn.CCCD ?? DBNull.Value));
+            cmd.Parameters.Add(new OracleParameter("soNha", (object?)bn.SoNha ?? DBNull.Value));
+            cmd.Parameters.Add(new OracleParameter("tenDuong", (object?)bn.TenDuong ?? DBNull.Value));
+            cmd.Parameters.Add(new OracleParameter("quanHuyen", (object?)bn.QuanHuyen ?? DBNull.Value));
+            cmd.Parameters.Add(new OracleParameter("tinhTP", (object?)bn.TinhTP ?? DBNull.Value));
+            cmd.Parameters.Add(new OracleParameter("tienSuBenh", (object?)bn.TienSuBenh ?? DBNull.Value));
+            cmd.Parameters.Add(new OracleParameter("tienSuBenhGD", (object?)bn.TienSuBenhGD ?? DBNull.Value));
+            cmd.Parameters.Add(new OracleParameter("diUngThuoc", (object?)bn.DiUngThuoc ?? DBNull.Value));
             cmd.Parameters.Add(new OracleParameter("maBN", bn.MaBN));
             cmd.ExecuteNonQuery();
             return true;
@@ -134,6 +137,7 @@ public static class PatientDAL
     /// <summary>
     /// Bệnh nhân tự cập nhật thông tin cá nhân được phép chỉnh sửa.
     /// Row-level security: Oracle VPD tự lọc đúng bệnh nhân qua ORAUSER.
+    /// Không có WHERE MÃBN - hoàn toàn dựa vào Oracle SESSION_USER (không thể giả mạo).
     /// </summary>
     public static bool UpdateMyProfile(BenhNhan bn)
     {
@@ -142,18 +146,18 @@ public static class PatientDAL
             var conn = OracleHelper.GetConnection();
             // Chỉ cập nhật các trường được phép: địa chỉ, tiền sử bệnh, dị ứng thuốc
             using var cmd = new OracleCommand(
-                "UPDATE BỆNHNHÂN SET SỐNHÀ=:soNha, TÊNĐƯỜNG=:tenDuong, " +
-                "QUẬNHUYỆN=:quanHuyen, TỈNHTP=:tinhTP, " +
-                "TIỀNSỬBỆNH=:tienSuBenh, TIỀNSỬBỆNHGĐ=:tienSuBenhGD, " +
-                "DỊỨNGTHUỐC=:diUngThuoc " +
-                "WHERE ORAUSER = SYS_CONTEXT('USERENV','SESSION_USER')", conn);
-            cmd.Parameters.Add(new OracleParameter("soNha", bn.SoNha));
-            cmd.Parameters.Add(new OracleParameter("tenDuong", bn.TenDuong));
-            cmd.Parameters.Add(new OracleParameter("quanHuyen", bn.QuanHuyen));
-            cmd.Parameters.Add(new OracleParameter("tinhTP", bn.TinhTP));
-            cmd.Parameters.Add(new OracleParameter("tienSuBenh", bn.TienSuBenh));
-            cmd.Parameters.Add(new OracleParameter("tienSuBenhGD", bn.TienSuBenhGD));
-            cmd.Parameters.Add(new OracleParameter("diUngThuoc", bn.DiUngThuoc));
+                $"UPDATE {TABLE} SET \"SỐNHÀ\"=:soNha, \"TÊNĐƯỜNG\"=:tenDuong, " +
+                "\"QUẬNHUYỆN\"=:quanHuyen, \"TỈNHTP\"=:tinhTP, " +
+                "\"TIỀNSỬBỆNH\"=:tienSuBenh, \"TIỀNSỬBỆNHGĐ\"=:tienSuBenhGD, " +
+                "\"DỊỨNGTHUỐC\"=:diUngThuoc " +
+                "WHERE \"ORAUSER\" = SYS_CONTEXT('USERENV','SESSION_USER')", conn);
+            cmd.Parameters.Add(new OracleParameter("soNha", (object?)bn.SoNha ?? DBNull.Value));
+            cmd.Parameters.Add(new OracleParameter("tenDuong", (object?)bn.TenDuong ?? DBNull.Value));
+            cmd.Parameters.Add(new OracleParameter("quanHuyen", (object?)bn.QuanHuyen ?? DBNull.Value));
+            cmd.Parameters.Add(new OracleParameter("tinhTP", (object?)bn.TinhTP ?? DBNull.Value));
+            cmd.Parameters.Add(new OracleParameter("tienSuBenh", (object?)bn.TienSuBenh ?? DBNull.Value));
+            cmd.Parameters.Add(new OracleParameter("tienSuBenhGD", (object?)bn.TienSuBenhGD ?? DBNull.Value));
+            cmd.Parameters.Add(new OracleParameter("diUngThuoc", (object?)bn.DiUngThuoc ?? DBNull.Value));
             cmd.ExecuteNonQuery();
             return true;
         }
@@ -169,19 +173,19 @@ public static class PatientDAL
     {
         return new BenhNhan
         {
-            MaBN = reader["MÃBN"]?.ToString() ?? "",
-            TenBN = reader["TÊNBN"]?.ToString() ?? "",
-            Phai = reader["PHÁI"]?.ToString() ?? "",
-            NgaySinh = reader["NGÀYSINH"] == DBNull.Value ? null : Convert.ToDateTime(reader["NGÀYSINH"]),
-            CCCD = reader["CCCD"]?.ToString() ?? "",
-            SoNha = reader["SỐNHÀ"]?.ToString() ?? "",
-            TenDuong = reader["TÊNĐƯỜNG"]?.ToString() ?? "",
-            QuanHuyen = reader["QUẬNHUYỆN"]?.ToString() ?? "",
-            TinhTP = reader["TỈNHTP"]?.ToString() ?? "",
-            TienSuBenh = reader["TIỀNSỬBỆNH"]?.ToString() ?? "",
+            MaBN         = reader["MÃBN"]?.ToString() ?? "",
+            TenBN        = reader["TÊNBN"]?.ToString() ?? "",
+            Phai         = reader["PHÁI"]?.ToString() ?? "",
+            NgaySinh     = reader["NGÀYSINH"] == DBNull.Value ? null : Convert.ToDateTime(reader["NGÀYSINH"]),
+            CCCD         = reader["CCCD"]?.ToString() ?? "",
+            SoNha        = reader["SỐNHÀ"]?.ToString() ?? "",
+            TenDuong     = reader["TÊNĐƯỜNG"]?.ToString() ?? "",
+            QuanHuyen    = reader["QUẬNHUYỆN"]?.ToString() ?? "",
+            TinhTP       = reader["TỈNHTP"]?.ToString() ?? "",
+            TienSuBenh   = reader["TIỀNSỬBỆNH"]?.ToString() ?? "",
             TienSuBenhGD = reader["TIỀNSỬBỆNHGĐ"]?.ToString() ?? "",
-            DiUngThuoc = reader["DỊỨNGTHUỐC"]?.ToString() ?? "",
-            OraUser = reader["ORAUSER"]?.ToString() ?? ""
+            DiUngThuoc   = reader["DỊỨNGTHUỐC"]?.ToString() ?? "",
+            OraUser      = reader["ORAUSER"]?.ToString() ?? ""
         };
     }
 
@@ -189,16 +193,16 @@ public static class PatientDAL
     {
         cmd.Parameters.Add(new OracleParameter("maBN", bn.MaBN));
         cmd.Parameters.Add(new OracleParameter("tenBN", bn.TenBN));
-        cmd.Parameters.Add(new OracleParameter("phai", bn.Phai));
+        cmd.Parameters.Add(new OracleParameter("phai", (object?)bn.Phai ?? DBNull.Value));
         cmd.Parameters.Add(new OracleParameter("ngaySinh", (object?)bn.NgaySinh ?? DBNull.Value));
-        cmd.Parameters.Add(new OracleParameter("cccd", bn.CCCD));
-        cmd.Parameters.Add(new OracleParameter("soNha", bn.SoNha));
-        cmd.Parameters.Add(new OracleParameter("tenDuong", bn.TenDuong));
-        cmd.Parameters.Add(new OracleParameter("quanHuyen", bn.QuanHuyen));
-        cmd.Parameters.Add(new OracleParameter("tinhTP", bn.TinhTP));
-        cmd.Parameters.Add(new OracleParameter("tienSuBenh", bn.TienSuBenh));
-        cmd.Parameters.Add(new OracleParameter("tienSuBenhGD", bn.TienSuBenhGD));
-        cmd.Parameters.Add(new OracleParameter("diUngThuoc", bn.DiUngThuoc));
-        cmd.Parameters.Add(new OracleParameter("oraUser", bn.OraUser));
+        cmd.Parameters.Add(new OracleParameter("cccd", (object?)bn.CCCD ?? DBNull.Value));
+        cmd.Parameters.Add(new OracleParameter("soNha", (object?)bn.SoNha ?? DBNull.Value));
+        cmd.Parameters.Add(new OracleParameter("tenDuong", (object?)bn.TenDuong ?? DBNull.Value));
+        cmd.Parameters.Add(new OracleParameter("quanHuyen", (object?)bn.QuanHuyen ?? DBNull.Value));
+        cmd.Parameters.Add(new OracleParameter("tinhTP", (object?)bn.TinhTP ?? DBNull.Value));
+        cmd.Parameters.Add(new OracleParameter("tienSuBenh", (object?)bn.TienSuBenh ?? DBNull.Value));
+        cmd.Parameters.Add(new OracleParameter("tienSuBenhGD", (object?)bn.TienSuBenhGD ?? DBNull.Value));
+        cmd.Parameters.Add(new OracleParameter("diUngThuoc", (object?)bn.DiUngThuoc ?? DBNull.Value));
+        cmd.Parameters.Add(new OracleParameter("oraUser", (object?)bn.OraUser ?? DBNull.Value));
     }
 }
