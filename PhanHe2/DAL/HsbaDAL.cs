@@ -8,7 +8,10 @@ namespace PhanHe2.DAL;
 /// </summary>
 public static class HsbaDAL
 {
-    /// <summary>Bác sĩ lấy danh sách HSBA của mình (VPD tự lọc)</summary>
+    // Tên bảng đúng theo schema Oracle (quoted identifier)
+    private const string TABLE = "\"HSBA\"";
+
+    /// <summary>Bác sĩ lấy danh sách HSBA của mình (VPD tự lọc theo MÃBS)</summary>
     public static List<Hsba> GetMyHsba()
     {
         var list = new List<Hsba>();
@@ -16,8 +19,8 @@ public static class HsbaDAL
         {
             var conn = OracleHelper.GetConnection();
             using var cmd = new OracleCommand(
-                "SELECT MÃHSBA, MÃBN, NGÀY, CHẨNĐOÁN, ĐIỀUTRỊ, MÃBS, MÃKHOA, KẾTLUẬN " +
-                "FROM HỒSƠBỆNÁN ORDER BY NGÀY DESC", conn);
+                $"SELECT \"MÃHSBA\", \"MÃBN\", \"NGÀY\", \"CHẨNĐOÁN\", \"ĐIỀUTRỊ\", \"MÃBS\", \"MÃKHOA\", \"KẾTLUẬN\" " +
+                $"FROM {TABLE} ORDER BY \"NGÀY\" DESC", conn);
             using var reader = cmd.ExecuteReader();
             while (reader.Read())
                 list.Add(MapReader(reader));
@@ -38,8 +41,8 @@ public static class HsbaDAL
         {
             var conn = OracleHelper.GetConnection();
             using var cmd = new OracleCommand(
-                "SELECT MÃHSBA, MÃBN, NGÀY, CHẨNĐOÁN, ĐIỀUTRỊ, MÃBS, MÃKHOA, KẾTLUẬN " +
-                "FROM HỒSƠBỆNÁN ORDER BY NGÀY DESC", conn);
+                $"SELECT \"MÃHSBA\", \"MÃBN\", \"NGÀY\", \"CHẨNĐOÁN\", \"ĐIỀUTRỊ\", \"MÃBS\", \"MÃKHOA\", \"KẾTLUẬN\" " +
+                $"FROM {TABLE} ORDER BY \"NGÀY\" DESC", conn);
             using var reader = cmd.ExecuteReader();
             while (reader.Read())
                 list.Add(MapReader(reader));
@@ -59,16 +62,16 @@ public static class HsbaDAL
         {
             var conn = OracleHelper.GetConnection();
             using var cmd = new OracleCommand(
-                "INSERT INTO HỒSƠBỆNÁN (MÃHSBA, MÃBN, NGÀY, CHẨNĐOÁN, ĐIỀUTRỊ, MÃBS, MÃKHOA, KẾTLUẬN) " +
+                $"INSERT INTO {TABLE} (\"MÃHSBA\", \"MÃBN\", \"NGÀY\", \"CHẨNĐOÁN\", \"ĐIỀUTRỊ\", \"MÃBS\", \"MÃKHOA\", \"KẾTLUẬN\") " +
                 "VALUES (:maHSBA, :maBN, :ngay, :chanDoan, :dieuTri, :maBS, :maKhoa, :ketLuan)", conn);
             cmd.Parameters.Add(new OracleParameter("maHSBA", h.MaHSBA));
             cmd.Parameters.Add(new OracleParameter("maBN", h.MaBN));
             cmd.Parameters.Add(new OracleParameter("ngay", (object?)h.Ngay ?? DBNull.Value));
-            cmd.Parameters.Add(new OracleParameter("chanDoan", h.ChanDoan));
-            cmd.Parameters.Add(new OracleParameter("dieuTri", h.DieuTri));
-            cmd.Parameters.Add(new OracleParameter("maBS", h.MaBS));
-            cmd.Parameters.Add(new OracleParameter("maKhoa", h.MaKhoa));
-            cmd.Parameters.Add(new OracleParameter("ketLuan", h.KetLuan));
+            cmd.Parameters.Add(new OracleParameter("chanDoan", (object?)h.ChanDoan ?? DBNull.Value));
+            cmd.Parameters.Add(new OracleParameter("dieuTri", (object?)h.DieuTri ?? DBNull.Value));
+            cmd.Parameters.Add(new OracleParameter("maBS", (object?)h.MaBS ?? DBNull.Value));
+            cmd.Parameters.Add(new OracleParameter("maKhoa", (object?)h.MaKhoa ?? DBNull.Value));
+            cmd.Parameters.Add(new OracleParameter("ketLuan", (object?)h.KetLuan ?? DBNull.Value));
             cmd.ExecuteNonQuery();
             return true;
         }
@@ -86,7 +89,7 @@ public static class HsbaDAL
         {
             var conn = OracleHelper.GetConnection();
             using var cmd = new OracleCommand(
-                "UPDATE HỒSƠBỆNÁN SET MÃBS=:maBS, MÃKHOA=:maKhoa WHERE MÃHSBA=:maHSBA", conn);
+                $"UPDATE {TABLE} SET \"MÃBS\"=:maBS, \"MÃKHOA\"=:maKhoa WHERE \"MÃHSBA\"=:maHSBA", conn);
             cmd.Parameters.Add(new OracleParameter("maBS", maBS));
             cmd.Parameters.Add(new OracleParameter("maKhoa", maKhoa));
             cmd.Parameters.Add(new OracleParameter("maHSBA", maHSBA));
@@ -100,18 +103,18 @@ public static class HsbaDAL
         }
     }
 
-    /// <summary>Bác sĩ cập nhật chẩn đoán, điều trị, kết luận</summary>
+    /// <summary>Bác sĩ cập nhật chẩn đoán, điều trị, kết luận (VPD bảo vệ row-level)</summary>
     public static bool UpdateDiagnosis(Hsba h)
     {
         try
         {
             var conn = OracleHelper.GetConnection();
             using var cmd = new OracleCommand(
-                "UPDATE HỒSƠBỆNÁN SET CHẨNĐOÁN=:chanDoan, ĐIỀUTRỊ=:dieuTri, KẾTLUẬN=:ketLuan " +
-                "WHERE MÃHSBA=:maHSBA", conn);
-            cmd.Parameters.Add(new OracleParameter("chanDoan", h.ChanDoan));
-            cmd.Parameters.Add(new OracleParameter("dieuTri", h.DieuTri));
-            cmd.Parameters.Add(new OracleParameter("ketLuan", h.KetLuan));
+                $"UPDATE {TABLE} SET \"CHẨNĐOÁN\"=:chanDoan, \"ĐIỀUTRỊ\"=:dieuTri, \"KẾTLUẬN\"=:ketLuan " +
+                "WHERE \"MÃHSBA\"=:maHSBA", conn);
+            cmd.Parameters.Add(new OracleParameter("chanDoan", (object?)h.ChanDoan ?? DBNull.Value));
+            cmd.Parameters.Add(new OracleParameter("dieuTri", (object?)h.DieuTri ?? DBNull.Value));
+            cmd.Parameters.Add(new OracleParameter("ketLuan", (object?)h.KetLuan ?? DBNull.Value));
             cmd.Parameters.Add(new OracleParameter("maHSBA", h.MaHSBA));
             cmd.ExecuteNonQuery();
             return true;
@@ -127,14 +130,14 @@ public static class HsbaDAL
     {
         return new Hsba
         {
-            MaHSBA = reader["MÃHSBA"]?.ToString() ?? "",
-            MaBN = reader["MÃBN"]?.ToString() ?? "",
-            Ngay = reader["NGÀY"] == DBNull.Value ? null : Convert.ToDateTime(reader["NGÀY"]),
+            MaHSBA   = reader["MÃHSBA"]?.ToString() ?? "",
+            MaBN     = reader["MÃBN"]?.ToString() ?? "",
+            Ngay     = reader["NGÀY"] == DBNull.Value ? null : Convert.ToDateTime(reader["NGÀY"]),
             ChanDoan = reader["CHẨNĐOÁN"]?.ToString() ?? "",
-            DieuTri = reader["ĐIỀUTRỊ"]?.ToString() ?? "",
-            MaBS = reader["MÃBS"]?.ToString() ?? "",
-            MaKhoa = reader["MÃKHOA"]?.ToString() ?? "",
-            KetLuan = reader["KẾTLUẬN"]?.ToString() ?? ""
+            DieuTri  = reader["ĐIỀUTRỊ"]?.ToString() ?? "",
+            MaBS     = reader["MÃBS"]?.ToString() ?? "",
+            MaKhoa   = reader["MÃKHOA"]?.ToString() ?? "",
+            KetLuan  = reader["KẾTLUẬN"]?.ToString() ?? ""
         };
     }
 }

@@ -6,6 +6,9 @@ namespace PhanHe2.DAL;
 /// <summary>Lớp truy cập dữ liệu Dịch vụ Hồ sơ bệnh án</summary>
 public static class HsbaDvDAL
 {
+    private const string TABLE     = "\"HSBA_DV\"";
+    private const string VIEW_KTV  = "VW_HSBA_DV_KTV";
+
     /// <summary>Lấy danh sách dịch vụ theo HSBA</summary>
     public static List<HsbaDv> GetServicesByHsba(string maHSBA)
     {
@@ -14,8 +17,8 @@ public static class HsbaDvDAL
         {
             var conn = OracleHelper.GetConnection();
             using var cmd = new OracleCommand(
-                "SELECT MÃHSBA, LOẠIDV, NGÀYDV, MÃKTV, KẾTQUẢ " +
-                "FROM HỒSƠBỆNÁN_DV WHERE MÃHSBA=:maHSBA ORDER BY NGÀYDV", conn);
+                $"SELECT \"MÃHSBA\", \"LOẠIDV\", \"NGÀYDV\", \"MÃKTV\", \"KẾTQUẢ\" " +
+                $"FROM {TABLE} WHERE \"MÃHSBA\"=:maHSBA ORDER BY \"NGÀYDV\"", conn);
             cmd.Parameters.Add(new OracleParameter("maHSBA", maHSBA));
             using var reader = cmd.ExecuteReader();
             while (reader.Read()) list.Add(MapReader(reader));
@@ -28,7 +31,7 @@ public static class HsbaDvDAL
         return list;
     }
 
-    /// <summary>KTV xem các dịch vụ được giao (qua view VW_HSBA_DV_KTV)</summary>
+    /// <summary>KTV xem các dịch vụ được giao (qua view VW_HSBA_DV_KTV - Oracle VPD bảo vệ)</summary>
     public static List<HsbaDv> GetMyServices()
     {
         var list = new List<HsbaDv>();
@@ -36,8 +39,8 @@ public static class HsbaDvDAL
         {
             var conn = OracleHelper.GetConnection();
             using var cmd = new OracleCommand(
-                "SELECT MÃHSBA, LOẠIDV, NGÀYDV, MÃKTV, KẾTQUẢ " +
-                "FROM VW_HSBA_DV_KTV ORDER BY NGÀYDV DESC", conn);
+                $"SELECT \"MÃHSBA\", \"LOẠIDV\", \"NGÀYDV\", \"MÃKTV\", \"KẾTQUẢ\" " +
+                $"FROM {VIEW_KTV} ORDER BY \"NGÀYDV\" DESC", conn);
             using var reader = cmd.ExecuteReader();
             while (reader.Read()) list.Add(MapReader(reader));
         }
@@ -56,13 +59,13 @@ public static class HsbaDvDAL
         {
             var conn = OracleHelper.GetConnection();
             using var cmd = new OracleCommand(
-                "INSERT INTO HỒSƠBỆNÁN_DV (MÃHSBA, LOẠIDV, NGÀYDV, MÃKTV, KẾTQUẢ) " +
+                $"INSERT INTO {TABLE} (\"MÃHSBA\", \"LOẠIDV\", \"NGÀYDV\", \"MÃKTV\", \"KẾTQUẢ\") " +
                 "VALUES (:maHSBA, :loaiDV, :ngayDV, :maKTV, :ketQua)", conn);
             cmd.Parameters.Add(new OracleParameter("maHSBA", dv.MaHSBA));
             cmd.Parameters.Add(new OracleParameter("loaiDV", dv.LoaiDV));
             cmd.Parameters.Add(new OracleParameter("ngayDV", (object?)dv.NgayDV ?? DBNull.Value));
-            cmd.Parameters.Add(new OracleParameter("maKTV", dv.MaKTV));
-            cmd.Parameters.Add(new OracleParameter("ketQua", dv.KetQua));
+            cmd.Parameters.Add(new OracleParameter("maKTV", (object?)dv.MaKTV ?? DBNull.Value));
+            cmd.Parameters.Add(new OracleParameter("ketQua", (object?)dv.KetQua ?? DBNull.Value));
             cmd.ExecuteNonQuery();
             return true;
         }
@@ -80,7 +83,7 @@ public static class HsbaDvDAL
         {
             var conn = OracleHelper.GetConnection();
             using var cmd = new OracleCommand(
-                "DELETE FROM HỒSƠBỆNÁN_DV WHERE MÃHSBA=:maHSBA AND LOẠIDV=:loaiDV AND NGÀYDV=:ngayDV", conn);
+                $"DELETE FROM {TABLE} WHERE \"MÃHSBA\"=:maHSBA AND \"LOẠIDV\"=:loaiDV AND \"NGÀYDV\"=:ngayDV", conn);
             cmd.Parameters.Add(new OracleParameter("maHSBA", maHSBA));
             cmd.Parameters.Add(new OracleParameter("loaiDV", loaiDV));
             cmd.Parameters.Add(new OracleParameter("ngayDV", ngayDV));
@@ -101,9 +104,9 @@ public static class HsbaDvDAL
         {
             var conn = OracleHelper.GetConnection();
             using var cmd = new OracleCommand(
-                "UPDATE HỒSƠBỆNÁN_DV SET KẾTQUẢ=:ketQua " +
-                "WHERE MÃHSBA=:maHSBA AND LOẠIDV=:loaiDV AND NGÀYDV=:ngayDV", conn);
-            cmd.Parameters.Add(new OracleParameter("ketQua", dv.KetQua));
+                $"UPDATE {TABLE} SET \"KẾTQUẢ\"=:ketQua " +
+                "WHERE \"MÃHSBA\"=:maHSBA AND \"LOẠIDV\"=:loaiDV AND \"NGÀYDV\"=:ngayDV", conn);
+            cmd.Parameters.Add(new OracleParameter("ketQua", (object?)dv.KetQua ?? DBNull.Value));
             cmd.Parameters.Add(new OracleParameter("maHSBA", dv.MaHSBA));
             cmd.Parameters.Add(new OracleParameter("loaiDV", dv.LoaiDV));
             cmd.Parameters.Add(new OracleParameter("ngayDV", (object?)dv.NgayDV ?? DBNull.Value));
@@ -124,8 +127,8 @@ public static class HsbaDvDAL
         {
             var conn = OracleHelper.GetConnection();
             using var cmd = new OracleCommand(
-                "UPDATE HỒSƠBỆNÁN_DV SET MÃKTV=:maKTV " +
-                "WHERE MÃHSBA=:maHSBA AND LOẠIDV=:loaiDV AND NGÀYDV=:ngayDV", conn);
+                $"UPDATE {TABLE} SET \"MÃKTV\"=:maKTV " +
+                "WHERE \"MÃHSBA\"=:maHSBA AND \"LOẠIDV\"=:loaiDV AND \"NGÀYDV\"=:ngayDV", conn);
             cmd.Parameters.Add(new OracleParameter("maKTV", maKTV));
             cmd.Parameters.Add(new OracleParameter("maHSBA", maHSBA));
             cmd.Parameters.Add(new OracleParameter("loaiDV", loaiDV));
@@ -147,7 +150,7 @@ public static class HsbaDvDAL
             MaHSBA = reader["MÃHSBA"]?.ToString() ?? "",
             LoaiDV = reader["LOẠIDV"]?.ToString() ?? "",
             NgayDV = reader["NGÀYDV"] == DBNull.Value ? null : Convert.ToDateTime(reader["NGÀYDV"]),
-            MaKTV = reader["MÃKTV"]?.ToString() ?? "",
+            MaKTV  = reader["MÃKTV"]?.ToString() ?? "",
             KetQua = reader["KẾTQUẢ"]?.ToString() ?? ""
         };
     }
