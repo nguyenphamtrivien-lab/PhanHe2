@@ -8,14 +8,14 @@
 -- Thứ tự chạy: 5/8
 -- =====================================================================
 
-SET DEFINE OFF;
-SET ECHO ON;
-SET SERVEROUTPUT ON;
+-- SET DEFINE OFF;
+-- SET ECHO ON;
+-- SET SERVEROUTPUT ON;
 
 -- =====================================================================
 -- BẢNG AUDIT_LOG: Ghi vết thay đổi dữ liệu nhạy cảm
 -- =====================================================================
-PROMPT --- Tạo bảng AUDIT_LOG ---
+-- PROMPT --- Tạo bảng AUDIT_LOG ---
 
 BEGIN EXECUTE IMMEDIATE 'DROP TABLE AUDIT_LOG CASCADE CONSTRAINTS'; EXCEPTION WHEN OTHERS THEN NULL; END;
 /
@@ -48,7 +48,7 @@ CREATE INDEX IDX_AUDITLOG_USER    ON AUDIT_LOG (USER_NAME, CHANGED_AT);
 CREATE INDEX IDX_AUDITLOG_TABLE   ON AUDIT_LOG (TABLE_NAME, CHANGED_AT);
 CREATE INDEX IDX_AUDITLOG_TIME    ON AUDIT_LOG (CHANGED_AT);
 
-PROMPT --- Đã tạo bảng AUDIT_LOG ---
+-- PROMPT --- Đã tạo bảng AUDIT_LOG ---
 
 -- =====================================================================
 -- PACKAGE VPD_BACSI_PKG: Chính sách VPD cho Bác sĩ
@@ -237,7 +237,7 @@ CREATE OR REPLACE PACKAGE BODY VPD_BACSI_PKG AS
 END VPD_BACSI_PKG;
 /
 
-PROMPT --- Đã tạo VPD_BACSI_PKG ---
+-- PROMPT --- Đã tạo VPD_BACSI_PKG ---
 
 -- =====================================================================
 -- PACKAGE VPD_DIEUPHOI_PKG: Chính sách VPD cho Điều phối viên
@@ -293,12 +293,12 @@ CREATE OR REPLACE PACKAGE BODY VPD_DIEUPHOI_PKG AS
 END VPD_DIEUPHOI_PKG;
 /
 
-PROMPT --- Đã tạo VPD_DIEUPHOI_PKG ---
+-- PROMPT --- Đã tạo VPD_DIEUPHOI_PKG ---
 
 -- =====================================================================
 -- ÁP DỤNG VPD POLICIES
 -- =====================================================================
-PROMPT --- Áp dụng VPD Policies ---
+-- PROMPT --- Áp dụng VPD Policies ---
 
 -- Xóa policies cũ nếu tồn tại
 BEGIN
@@ -376,7 +376,7 @@ BEGIN
 END;
 /
 
-PROMPT --- Đã áp dụng 3 VPD policies ---
+-- PROMPT --- Đã áp dụng 3 VPD policies ---
 
 -- =====================================================================
 -- TRIGGERS GHI VẾT (AUDIT TRIGGERS)
@@ -506,14 +506,14 @@ BEGIN
 END TRG_AUDIT_DONTHUOC;
 /
 
-PROMPT --- Đã tạo 3 audit triggers ---
+-- PROMPT --- Đã tạo 3 audit triggers ---
 
 COMMIT;
 
 -- =====================================================================
 -- KIỂM TRA KẾT QUẢ
 -- =====================================================================
-PROMPT --- Kiểm tra VPD Policies đã áp dụng ---
+-- PROMPT --- Kiểm tra VPD Policies đã áp dụng ---
 SELECT
   OBJECT_OWNER,
   OBJECT_NAME,
@@ -529,7 +529,7 @@ WHERE OBJECT_OWNER = 'SYSTEM'
   AND OBJECT_NAME IN ('"HSBA"', '"BỆNHNHÂN"', '"ĐƠNTHUỐC"')
 ORDER BY OBJECT_NAME;
 
-PROMPT --- Kiểm tra Triggers đã tạo ---
+-- PROMPT --- Kiểm tra Triggers đã tạo ---
 SELECT
   TRIGGER_NAME,
   TRIGGER_TYPE,
@@ -540,8 +540,8 @@ FROM USER_TRIGGERS
 WHERE TRIGGER_NAME IN ('TRG_AUDIT_HSBA', 'TRG_AUDIT_HSBA_DV', 'TRG_AUDIT_DONTHUOC')
 ORDER BY TRIGGER_NAME;
 
-PROMPT --- Demo Test VPD: BS001 thấy bao nhiêu HSBA ---
-PROMPT --- (Chạy lệnh này khi login là BS001) ---
-PROMPT --- SELECT COUNT(*) FROM HSBA; ---
+-- PROMPT --- Demo Test VPD: BS001 thấy bao nhiêu HSBA ---
+-- PROMPT --- (Chạy lệnh này khi login là BS001) ---
+-- PROMPT --- SELECT COUNT(*) FROM HSBA; ---
 
-PROMPT === 05_vpd.sql completed successfully ===
+-- PROMPT === 05_vpd.sql completed successfully ===

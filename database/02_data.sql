@@ -7,9 +7,9 @@
 -- Thứ tự chạy: 2/8
 -- =====================================================================
 
-SET DEFINE OFF;
-SET ECHO ON;
-SET SERVEROUTPUT ON;
+-- SET DEFINE OFF;
+-- SET ECHO ON;
+-- SET SERVEROUTPUT ON;
 
 -- Đặt định dạng ngày tháng
 ALTER SESSION SET NLS_DATE_FORMAT      = 'DD/MM/YYYY';
@@ -19,7 +19,7 @@ ALTER SESSION SET NLS_TIMESTAMP_FORMAT = 'DD/MM/YYYY HH24:MI:SS';
 -- DỮ LIỆU BỆNH NHÂN (5 bệnh nhân)
 -- ORAUSER liên kết với tài khoản Oracle: bn001..bn005
 -- =====================================================================
-PROMPT --- Insert 5 bệnh nhân ---
+-- PROMPT --- Insert 5 bệnh nhân ---
 
 INSERT INTO "BỆNHNHÂN" (
   "MÃBN", "TÊNBN", "PHÁI", "NGÀYSINH", "CCCD",
@@ -87,7 +87,7 @@ INSERT INTO "BỆNHNHÂN" (
 );
 
 COMMIT;
-PROMPT --- Đã insert 5 bệnh nhân ---
+-- PROMPT --- Đã insert 5 bệnh nhân ---
 
 -- =====================================================================
 -- DỮ LIỆU NHÂN VIÊN (7 nhân viên)
@@ -95,7 +95,7 @@ PROMPT --- Đã insert 5 bệnh nhân ---
 -- 3 Bác sĩ/Y sĩ (bs001, bs002, bs003)
 -- 2 Kỹ thuật viên (ktv001, ktv002)
 -- =====================================================================
-PROMPT --- Insert 7 nhân viên ---
+-- PROMPT --- Insert 7 nhân viên ---
 
 -- Điều phối viên 1 (Giám đốc - OLS BGD toàn bộ)
 INSERT INTO "NHÂNVIÊN" (
@@ -168,12 +168,12 @@ INSERT INTO "NHÂNVIÊN" (
 );
 
 COMMIT;
-PROMPT --- Đã insert 7 nhân viên (2 DPV, 3 BS, 2 KTV) ---
+-- PROMPT --- Đã insert 7 nhân viên (2 DPV, 3 BS, 2 KTV) ---
 
 -- =====================================================================
 -- DỮ LIỆU HỒ SƠ BỆNH ÁN (3 HSBA)
 -- =====================================================================
-PROMPT --- Insert 3 HSBA ---
+-- PROMPT --- Insert 3 HSBA ---
 
 INSERT INTO "HSBA" ("MÃHSBA", "MÃBN", "NGÀY", "CHẨNĐOÁN", "ĐIỀUTRỊ", "MÃBS", "MÃKHOA", "KẾTLUẬN")
 VALUES (
@@ -203,12 +203,12 @@ VALUES (
 );
 
 COMMIT;
-PROMPT --- Đã insert 3 HSBA ---
+-- PROMPT --- Đã insert 3 HSBA ---
 
 -- =====================================================================
 -- DỮ LIỆU HSBA_DV (Dịch vụ kỹ thuật)
 -- =====================================================================
-PROMPT --- Insert 5 HSBA_DV ---
+-- PROMPT --- Insert 5 HSBA_DV ---
 
 INSERT INTO "HSBA_DV" ("MÃHSBA", "LOẠIDV", "NGÀYDV", "MÃKTV", "KẾTQUẢ")
 VALUES (
@@ -246,12 +246,12 @@ VALUES (
 );
 
 COMMIT;
-PROMPT --- Đã insert 5 HSBA_DV ---
+-- PROMPT --- Đã insert 5 HSBA_DV ---
 
 -- =====================================================================
 -- DỮ LIỆU ĐƠN THUỐC
 -- =====================================================================
-PROMPT --- Insert 6 đơn thuốc ---
+-- PROMPT --- Insert 6 đơn thuốc ---
 
 INSERT INTO "ĐƠNTHUỐC" ("MÃHSBA", "NGÀYĐT", "TÊNTHUỐC", "LIỀUDÙNG")
 VALUES (
@@ -296,14 +296,14 @@ VALUES (
 );
 
 COMMIT;
-PROMPT --- Đã insert 6 đơn thuốc ---
+-- PROMPT --- Đã insert 6 đơn thuốc ---
 
 -- =====================================================================
 -- DỮ LIỆU THÔNG BÁO (7 thông báo cho OLS demo)
 -- Nhãn OLS sẽ được gán trong file 06_ols.sql
 -- t1=MÃTB:1, t2=MÃTB:2, ..., t7=MÃTB:7
 -- =====================================================================
-PROMPT --- Insert 7 thông báo ---
+-- PROMPT --- Insert 7 thông báo ---
 
 -- t1: Toàn bộ nhân viên (NHANVIEN)
 INSERT INTO "THÔNGBÁO" ("NỘIDUNG", "NGÀYGIỜ", "ĐỊAĐIỂM")
@@ -362,10 +362,10 @@ VALUES (
 );
 
 COMMIT;
-PROMPT --- Đã insert 7 thông báo ---
+-- PROMPT --- Đã insert 7 thông báo ---
 
 -- Kiểm tra kết quả
-PROMPT --- Thống kê dữ liệu đã insert ---
+-- PROMPT --- Thống kê dữ liệu đã insert ---
 SELECT 'BỆNHNHÂN' AS BANG, COUNT(*) AS SO_LUONG FROM "BỆNHNHÂN"
 UNION ALL SELECT 'NHÂNVIÊN', COUNT(*) FROM "NHÂNVIÊN"
 UNION ALL SELECT 'HSBA',     COUNT(*) FROM "HSBA"
@@ -373,4 +373,4 @@ UNION ALL SELECT 'HSBA_DV',  COUNT(*) FROM "HSBA_DV"
 UNION ALL SELECT 'ĐƠNTHUỐC', COUNT(*) FROM "ĐƠNTHUỐC"
 UNION ALL SELECT 'THÔNGBÁO', COUNT(*) FROM "THÔNGBÁO";
 
-PROMPT === 02_data.sql completed successfully ===
+-- PROMPT === 02_data.sql completed successfully ===

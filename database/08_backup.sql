@@ -5,9 +5,9 @@
 --        Flashback + Data Pump + LogMiner + RMAN + DBMS_SCHEDULER (tự động)
 -- Chạy với quyền: SYS / SYSDBA (trừ Data Pump chạy bằng SYSTEM)
 -- ==============================================================================
-SET DEFINE OFF;
-SET ECHO ON;
-SET SERVEROUTPUT ON;
+-- SET DEFINE OFF;
+-- SET ECHO ON;
+-- SET SERVEROUTPUT ON;
 
 
 -- ==============================================================================
@@ -77,7 +77,7 @@ ALTER TABLE SYSTEM."HSBA"     ENABLE ROW MOVEMENT;
 ALTER TABLE SYSTEM."ĐƠNTHUỐC" ENABLE ROW MOVEMENT;
 ALTER TABLE SYSTEM."HSBA_DV"  ENABLE ROW MOVEMENT;
 
-PROMPT >> [OK] Cau hinh nen tang hoan tat.
+-- PROMPT >> [OK] Cau hinh nen tang hoan tat.
 
 
 -- ==============================================================================
@@ -129,7 +129,7 @@ TO TIMESTAMP (SYSTIMESTAMP - INTERVAL '5' MINUTE);
 
 -- Xác nhận đã phục hồi
 SELECT "MÃHSBA", "CHẨNĐOÁN" FROM SYSTEM."HSBA";
-PROMPT >> [OK] Flashback Table HSBA hoan tat.
+-- PROMPT >> [OK] Flashback Table HSBA hoan tat.
 
 -- Dọn dẹp bảng demo
 DROP TABLE SYSTEM.FLASHBACK_DEMO_LOG;
@@ -149,7 +149,7 @@ DROP TABLE SYSTEM.FLASHBACK_DEMO_LOG;
 CREATE OR REPLACE DIRECTORY BACKUP_DIR AS '/opt/oracle/backup/datapump';
 GRANT READ, WRITE ON DIRECTORY BACKUP_DIR TO SYSTEM;
 
-PROMPT >> [OK] Oracle Directory BACKUP_DIR da tao.
+-- PROMPT >> [OK] Oracle Directory BACKUP_DIR da tao.
 
 /*
 -- Chạy Export toàn bộ schema SYSTEM (lệnh OS, không phải SQL):
@@ -305,7 +305,7 @@ BEGIN
 END SP_AUTO_BACKUP;
 /
 
-PROMPT >> [OK] Procedure SP_AUTO_BACKUP da tao.
+-- PROMPT >> [OK] Procedure SP_AUTO_BACKUP da tao.
 
 -- Bước 2: Xóa job cũ nếu tồn tại
 BEGIN
@@ -368,7 +368,7 @@ FROM DBA_SCHEDULER_JOBS
 WHERE JOB_NAME IN ('JOB_DAILY_BACKUP', 'JOB_WEEKLY_BACKUP')
 ORDER BY JOB_NAME;
 
-PROMPT >> [OK] Sao luu tu dong da thiet lap (hang ngay 02:00 + Chu nhat 01:00).
+-- PROMPT >> [OK] Sao luu tu dong da thiet lap (hang ngay 02:00 + Chu nhat 01:00).
 
 
 -- ==============================================================================
@@ -432,4 +432,4 @@ FROM DBA_DATAPUMP_JOBS
 WHERE STATE = 'NOT RUNNING'
 ORDER BY LAST_UPDATE DESC;
 
-PROMPT >> 08_backup.sql hoan tat.
+-- PROMPT >> 08_backup.sql hoan tat.

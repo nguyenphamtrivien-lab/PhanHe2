@@ -5,9 +5,9 @@
 --        Standard Audit (5 ngữ cảnh) + FGA (4 tình huống) + Unified Audit
 -- Chạy với quyền: SYS / SYSDBA
 -- ==============================================================================
-SET DEFINE OFF;
-SET ECHO ON;
-SET SERVEROUTPUT ON;
+-- SET DEFINE OFF;
+-- SET ECHO ON;
+-- SET SERVEROUTPUT ON;
 
 -- ==============================================================================
 -- BƯỚC 1: KÍCH HOẠT KIỂM TOÁN HỆ THỐNG
@@ -79,7 +79,7 @@ AUDIT GRANT PROCEDURE, GRANT TABLE BY ACCESS;
 AUDIT DELETE ON SYSTEM."BỆNHNHÂN" BY ACCESS;
 
 COMMIT;
-PROMPT >> [OK] Standard Audit 5 ngu canh da thiet lap.
+-- PROMPT >> [OK] Standard Audit 5 ngu canh da thiet lap.
 
 
 -- ==============================================================================
@@ -167,7 +167,7 @@ END;
 /
 
 COMMIT;
-PROMPT >> [OK] Fine-Grained Audit 4 tinh huong da thiet lap.
+-- PROMPT >> [OK] Fine-Grained Audit 4 tinh huong da thiet lap.
 
 
 -- ==============================================================================
@@ -188,7 +188,7 @@ CREATE OR REPLACE AUDIT POLICY AUD_UA_HSBADV_ILLEGAL
 AUDIT POLICY AUD_UA_HSBADV_ILLEGAL WHENEVER NOT SUCCESSFUL;
 
 COMMIT;
-PROMPT >> [OK] Unified Audit bo sung tinh huong c, d da thiet lap.
+-- PROMPT >> [OK] Unified Audit bo sung tinh huong c, d da thiet lap.
 
 
 -- ==============================================================================
@@ -361,4 +361,4 @@ WHERE UNIFIED_AUDIT_POLICIES IN (
 )
 ORDER BY EVENT_TIMESTAMP DESC;
 
-PROMPT >> 07_audit.sql hoan tat.
+-- PROMPT >> 07_audit.sql hoan tat.

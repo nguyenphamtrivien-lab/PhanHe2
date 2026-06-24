@@ -7,9 +7,9 @@
 -- Thứ tự chạy: 1/8
 -- =====================================================================
 
-SET DEFINE OFF;
-SET ECHO ON;
-SET SERVEROUTPUT ON;
+-- SET DEFINE OFF;
+-- SET ECHO ON;
+-- SET SERVEROUTPUT ON;
 
 -- =====================================================================
 -- XÓA CÁC ĐỐI TƯỢNG CŨ NẾU TỒN TẠI (chạy an toàn)
@@ -238,15 +238,15 @@ END FN_NEXT_MAHSBA;
 COMMIT;
 
 -- Kiểm tra kết quả
-PROMPT --- Danh sách bảng đã tạo ---
+-- PROMPT --- Danh sách bảng đã tạo ---
 SELECT TABLE_NAME, NUM_ROWS
 FROM USER_TABLES
 WHERE TABLE_NAME IN ('BỆNHNHÂN','NHÂNVIÊN','HSBA','HSBA_DV','ĐƠNTHUỐC','THÔNGBÁO')
 ORDER BY TABLE_NAME;
 
-PROMPT --- Danh sách sequences đã tạo ---
+-- PROMPT --- Danh sách sequences đã tạo ---
 SELECT SEQUENCE_NAME, MIN_VALUE, MAX_VALUE, INCREMENT_BY, LAST_NUMBER
 FROM USER_SEQUENCES
 WHERE SEQUENCE_NAME IN ('SEQ_BENHNHAN','SEQ_NHANVIEN','SEQ_HSBA');
 
-PROMPT === 01_schema.sql completed successfully ===
+-- PROMPT === 01_schema.sql completed successfully ===

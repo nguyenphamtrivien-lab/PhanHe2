@@ -21,16 +21,16 @@
 --           VPD lọc HSBA chỉ trả về hồ sơ của BS001.
 -- =====================================================================
 
-SET DEFINE OFF;
-SET ECHO ON;
-SET SERVEROUTPUT ON;
+-- SET DEFINE OFF;
+-- SET ECHO ON;
+-- SET SERVEROUTPUT ON;
 
 -- =====================================================================
 -- BƯỚC 1: TẠO CÁC TÀI KHOẢN ORACLE
 -- Password tạm: Welcome1# (buộc đổi lần đầu đăng nhập trong production)
 -- Lưu ý: Oracle 21c yêu cầu password phức tạp (chữ hoa, thường, số, ký tự đặc biệt)
 -- =====================================================================
-PROMPT --- Tạo tài khoản Điều phối viên ---
+-- PROMPT --- Tạo tài khoản Điều phối viên ---
 
 -- DPV001: Giám đốc - OLS level BGD (đọc toàn bộ)
 CREATE USER DPV001 IDENTIFIED BY "Welcome1#"
@@ -44,7 +44,7 @@ CREATE USER DPV002 IDENTIFIED BY "Welcome1#"
   TEMPORARY TABLESPACE TEMP
   QUOTA UNLIMITED ON USERS;
 
-PROMPT --- Tạo tài khoản Bác sĩ/Y sĩ ---
+-- PROMPT --- Tạo tài khoản Bác sĩ/Y sĩ ---
 
 -- BS001: Lãnh đạo Khoa Tim mạch tại HCM - OLS: LDKHOA:TIMMANH:HCM
 CREATE USER BS001 IDENTIFIED BY "Welcome1#"
@@ -64,7 +64,7 @@ CREATE USER BS003 IDENTIFIED BY "Welcome1#"
   TEMPORARY TABLESPACE TEMP
   QUOTA UNLIMITED ON USERS;
 
-PROMPT --- Tạo tài khoản Kỹ thuật viên ---
+-- PROMPT --- Tạo tài khoản Kỹ thuật viên ---
 
 -- KTV001: Nhân viên Khoa Thần kinh tại HCM - OLS: NHANVIEN:THANKINH:HCM
 CREATE USER KTV001 IDENTIFIED BY "Welcome1#"
@@ -78,7 +78,7 @@ CREATE USER KTV002 IDENTIFIED BY "Welcome1#"
   TEMPORARY TABLESPACE TEMP
   QUOTA UNLIMITED ON USERS;
 
-PROMPT --- Tạo tài khoản Bệnh nhân ---
+-- PROMPT --- Tạo tài khoản Bệnh nhân ---
 
 -- BN001..BN005: Bệnh nhân - OLS: NHANVIEN (hoặc tùy cấu hình OLS)
 CREATE USER BN001 IDENTIFIED BY "Welcome1#"
@@ -111,7 +111,7 @@ CREATE USER BN005 IDENTIFIED BY "Welcome1#"
 -- CREATE SESSION: quyền cơ bản để tạo kết nối đến database
 -- CONNECT role: tập hợp các quyền cơ bản (bao gồm CREATE SESSION)
 -- =====================================================================
-PROMPT --- Grant CONNECT và CREATE SESSION ---
+-- PROMPT --- Grant CONNECT và CREATE SESSION ---
 
 GRANT CONNECT, CREATE SESSION TO DPV001;
 GRANT CONNECT, CREATE SESSION TO DPV002;
@@ -141,7 +141,7 @@ GRANT CONNECT, CREATE SESSION TO BN005;
 -- │  ↓ lọc HSBA WHERE MÃBS = 'BS001'                        │
 -- └─────────────────────────────────────────────────────────┘
 -- =====================================================================
-PROMPT --- Cập nhật liên kết ORAUSER ---
+-- PROMPT --- Cập nhật liên kết ORAUSER ---
 
 -- Liên kết tài khoản cho NHÂNVIÊN (đảm bảo uppercase)
 UPDATE "NHÂNVIÊN" SET "ORAUSER" = 'DPV001' WHERE "MÃNV" = 'DPV001';
@@ -164,7 +164,7 @@ COMMIT;
 -- =====================================================================
 -- KIỂM TRA KẾT QUẢ
 -- =====================================================================
-PROMPT --- Kiểm tra tài khoản đã tạo ---
+-- PROMPT --- Kiểm tra tài khoản đã tạo ---
 SELECT
   USERNAME,
   ACCOUNT_STATUS,
@@ -179,13 +179,13 @@ WHERE USERNAME IN (
 )
 ORDER BY USERNAME;
 
-PROMPT --- Kiểm tra liên kết ORAUSER trong NHÂNVIÊN ---
+-- PROMPT --- Kiểm tra liên kết ORAUSER trong NHÂNVIÊN ---
 SELECT "MÃNV", "HỌTÊN", "VAITRÒ", "ORAUSER" FROM "NHÂNVIÊN" ORDER BY "MÃNV";
 
-PROMPT --- Kiểm tra liên kết ORAUSER trong BỆNHNHÂN ---
+-- PROMPT --- Kiểm tra liên kết ORAUSER trong BỆNHNHÂN ---
 SELECT "MÃBN", "TÊNBN", "ORAUSER" FROM "BỆNHNHÂN" ORDER BY "MÃBN";
 
-PROMPT --- Demo: Mô phỏng SYS_CONTEXT ---
+-- PROMPT --- Demo: Mô phỏng SYS_CONTEXT ---
 SELECT
   'BS001' AS "ORACLE_USER",
   (SELECT "MÃNV" FROM "NHÂNVIÊN" WHERE "ORAUSER" = 'BS001') AS "MÃNV_TÌM_ĐƯỢC",
@@ -194,4 +194,4 @@ SELECT
   ) AS "SỐ_HSBA_THẤY"
 FROM DUAL;
 
-PROMPT === 03_accounts.sql completed successfully ===
+-- PROMPT === 03_accounts.sql completed successfully ===
