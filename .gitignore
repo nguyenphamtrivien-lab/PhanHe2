@@ -1,0 +1,161 @@
+# ============================================================
+# .gitignore cho dự án PhanHe2
+# C# WinForms .NET 8 + Oracle 21c XE
+# ============================================================
+
+# ============================================================
+# .NET / C# Build Output
+# ============================================================
+bin/
+obj/
+out/
+
+# ============================================================
+# Visual Studio
+# ============================================================
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+*.userprefs
+
+# VC++ cache
+ipch/
+*.aps
+*.ncb
+*.opendb
+*.opensdf
+*.sdf
+*.cachefile
+*.VC.db
+*.VC.VC.opendb
+
+# Visual Studio profiling
+*.psess
+*.vsp
+*.vspx
+*.sap
+
+# ============================================================
+# .NET Runtime / Publish
+# ============================================================
+[Pp]ublish/
+[Rr]elease/
+[Dd]ebug/
+*.nupkg
+*.snupkg
+*.egg
+*.egg-info/
+
+# .NET local tools
+.config/dotnet-tools.json
+
+# NuGet
+packages/
+*.nupkg
+project.lock.json
+project.fragment.lock.json
+artifacts/
+.nuget/
+
+# ============================================================
+# Oracle / Database
+# ============================================================
+# File dump backup Oracle Data Pump (có thể rất lớn)
+*.dmp
+*.log
+
+# Oracle wallet (chứa thông tin xác thực - TUYỆT ĐỐI không commit)
+wallet/
+*.p12
+*.sso
+*.cer
+*.jks
+cwallet.sso
+ewallet.p12
+sqlnet.ora
+tnsnames.ora
+
+# SQLcl / SQL*Plus history
+sqlplus_history
+sqlcl.log
+
+# ============================================================
+# Bảo mật - TUYỆT ĐỐI KHÔNG COMMIT
+# ============================================================
+# File chứa mật khẩu, connection string
+*.env
+.env
+.env.*
+appsettings.Production.json
+secrets.json
+**/secrets/**
+*password*
+*credential*
+
+# ============================================================
+# Hệ điều hành
+# ============================================================
+
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+Desktop.ini
+$RECYCLE.BIN/
+*.lnk
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+
+# Linux
+*~
+.fuse_hidden*
+.directory
+.Trash-*
+
+# ============================================================
+# IDE khác
+# ============================================================
+
+# JetBrains Rider
+.idea/
+*.sln.iml
+
+# VS Code (giữ settings chung, bỏ settings cá nhân)
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# ============================================================
+# Tạm thời / Công cụ
+# ============================================================
+*.tmp
+*.temp
+*.swp
+*.bak
+*.orig
+*.cache
+~$*
+
+# Test results
+TestResults/
+coverage/
+*.trx
+*.coverage
+*.coveragexml
+
+# ============================================================
+# Gemini / AI tools (không cần theo dõi)
+# ============================================================
+.gemini/
+.agents/
